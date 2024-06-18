@@ -1,43 +1,31 @@
 import React, { useState } from "react";
 
-function QuestionForm(props) {
-  const [formData, setFormData] = useState({
-    prompt: "",
-    answer1: "",
-    answer2: "",
-    answer3: "",
-    answer4: "",
-    correctIndex: 0,
-  });
+function QuestionForm({ onAddQuestion }) {
+  const [prompt, setPrompt] = useState("");
+  const [answer1, setAnswer1] = useState("");
+  const [answer2, setAnswer2] = useState("");
+  const [answer3, setAnswer3] = useState("");
+  const [answer4, setAnswer4] = useState("");
+  const [correctIndex, setCorrectIndex] = useState(0);
 
-  function handleChange(event) {
-    setFormData({
-      ...formData,
-      [event.target.name]: event.target.value,
-    });
-  }
-
-  // Handles the submission of the form to be added to the existing questions
   function handleSubmit(event) {
-    // Preventing reloading of the submission
     event.preventDefault();
-    console.log(formData);
+
+    const formData = {
+      prompt,
+      answers: [answer1, answer2, answer3, answer4],
+      correctIndex: parseInt(correctIndex),
+    };
+
     fetch("http://localhost:4000/questions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        prompt: formData.prompt,
-        answers: [
-          formData.answer1,
-          formData.answer2,
-          formData.answer3,
-          formData.answer4
-        ],
-        correctIndex: parseInt(formData.correctIndex),
-      }),
-    });
+      body: JSON.stringify(formData),
+    })
+      .then((r) => r.json())
+      .then((data) => onAddQuestion(data));
   }
 
   return (
@@ -49,8 +37,8 @@ function QuestionForm(props) {
           <input
             type="text"
             name="prompt"
-            value={formData.prompt}
-            onChange={handleChange}
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
           />
         </label>
         <label>
@@ -58,8 +46,8 @@ function QuestionForm(props) {
           <input
             type="text"
             name="answer1"
-            value={formData.answer1}
-            onChange={handleChange}
+            value={answer1}
+            onChange={(e) => setAnswer1(e.target.value)}
           />
         </label>
         <label>
@@ -67,8 +55,8 @@ function QuestionForm(props) {
           <input
             type="text"
             name="answer2"
-            value={formData.answer2}
-            onChange={handleChange}
+            value={answer2}
+            onChange={(e) => setAnswer2(e.target.value)}
           />
         </label>
         <label>
@@ -76,8 +64,8 @@ function QuestionForm(props) {
           <input
             type="text"
             name="answer3"
-            value={formData.answer3}
-            onChange={handleChange}
+            value={answer3}
+            onChange={(e) => setAnswer3(e.target.value)}
           />
         </label>
         <label>
@@ -85,21 +73,21 @@ function QuestionForm(props) {
           <input
             type="text"
             name="answer4"
-            value={formData.answer4}
-            onChange={handleChange}
+            value={answer4}
+            onChange={(e) => setAnswer4(e.target.value)}
           />
         </label>
         <label>
           Correct Answer:
           <select
             name="correctIndex"
-            value={formData.correctIndex}
-            onChange={handleChange}
+            value={correctIndex}
+            onChange={(e) => setCorrectIndex(e.target.value)}
           >
-            <option value="0">{formData.answer1}</option>
-            <option value="1">{formData.answer2}</option>
-            <option value="2">{formData.answer3}</option>
-            <option value="3">{formData.answer4}</option>
+            <option value="0">{answer1}</option>
+            <option value="1">{answer2}</option>
+            <option value="2">{answer3}</option>
+            <option value="3">{answer4}</option>
           </select>
         </label>
         <button type="submit">Add Question</button>
