@@ -22,7 +22,10 @@ function QuestionItem({ question, onHandleDelete, onHandleUpdate }) {
       body: JSON.stringify({correctIndex : newCorrectIndex})
     })
       .then((r) => r.json())
-      .then((data) => onHandleUpdate(data))
+      .then((data) => {
+        // console.log(data);
+        onHandleUpdate(data)
+      })
   }
   
   const handleDelete = () => {
